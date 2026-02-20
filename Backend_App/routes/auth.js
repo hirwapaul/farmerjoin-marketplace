@@ -100,4 +100,45 @@ router.post("/login", (req, res) => {
   });
 });
 
+// DELETE user (admin only)
+router.delete("/:userId", (req, res) => {
+  const { userId } = req.params;
+  
+  db.query('DELETE FROM users WHERE user_id = ?', [userId], (err, result) => {
+    if (err) {
+      console.error('Error deleting user:', err);
+      return res.status(500).json({ message: 'Failed to delete user' });
+    }
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    res.json({ message: 'User deleted successfully' });
+  });
+});
+
+// UPDATE user (admin only)
+router.put("/:userId", (req, res) => {
+  const { userId } = req.params;
+  const { full_name, email, phone } = req.body;
+  
+  db.query(
+    'UPDATE users SET full_name = ?, email = ?, phone = ? WHERE user_id = ?',
+    [full_name, email, phone, userId],
+    (err, result) => {
+      if (err) {
+        console.error('Error updating user:', err);
+        return res.status(500).json({ message: 'Failed to update user' });
+      }
+      
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
+      res.json({ message: 'User updated successfully' });
+    }
+  );
+});
+
 module.exports = router;
