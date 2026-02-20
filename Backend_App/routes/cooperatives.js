@@ -221,6 +221,25 @@ router.put('/profile', isCooperative, upload.single('profile_photo'), (req, res)
     }
 });
 
+// Get all cooperatives (admin only)
+router.get('/admin/cooperatives', isAdmin, (req, res) => {
+    const query = `
+        SELECT c.*, u.full_name, u.email, u.phone as user_phone, u.created_at as user_created_at
+        FROM cooperatives c
+        JOIN users u ON c.user_id = u.user_id
+        WHERE u.role = 'cooperative'
+        ORDER BY c.created_at DESC
+    `;
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ message: 'Failed to fetch cooperatives' });
+        }
+        res.json(results);
+    });
+});
+
 // Get cooperative's products
 router.get('/products', isCooperative, (req, res) => {
     const query = `
@@ -237,6 +256,145 @@ router.get('/products', isCooperative, (req, res) => {
             return res.status(500).json({ message: 'Failed to fetch cooperative products' });
         }
         res.json(results);
+    });
+});
+
+// Update cooperative (admin only)
+router.put('/admin/:cooperativeId', isAdmin, (req, res) => {
+    const { cooperativeId } = req.params;
+    const { full_name, email, phone, cooperative_name, description, location } = req.body;
+    
+    // Start transaction for safe update
+    db.beginTransaction((err) => {
+        if (err) {
+            console.error('Transaction error:', err);
+            return res.status(500).json({ message: 'Database error' });
+        }
+        
+        // Get cooperative's user_id
+        db.query('SELECT user_id FROM cooperatives WHERE cooperative_id = ?', [cooperativeId], (err, results) => {
+            if (err) {
+                return db.rollback(() => {
+                    console.error('Error fetching cooperative:', err);
+                    res.status(500).json({ message: 'Failed to fetch cooperative' });
+                });
+            }
+            
+            if (results.length === 0) {
+                return db.rollback(() => {
+                    res.status(404).json({ message: 'Cooperative not found' });
+                });
+            }
+            
+            const userId = results[0].user_id;
+            
+            // Update users table
+            const userUpdateQuery = `
+                UPDATE users 
+                SET full_name = ?, email = ?, phone = ?
+                WHERE user_id = ?
+            `;
+            
+            db.query(userUpdateQuery, [full_name, email, phone, userId], (err) => {
+                if (err) {
+                    return db.rollback(() => {
+                        console.error('Error updating user:', err);
+                        res.status(500).json({ message: 'Failed to update user info' });
+                    });
+                }
+                
+                // Update cooperatives table
+                const cooperativeUpdateQuery = `
+                    UPDATE cooperatives 
+                    SET cooperative_name = ?, description = ?, location = ?, phone = ?
+                    WHERE cooperative_id = ?
+                `;
+                
+                db.query(cooperativeUpdateQuery, [cooperative_name, description, location, phone, cooperativeId], (err) => {
+                    if (err) {
+                        return db.rollback(() => {
+                            console.error('Error updating cooperative:', err);
+                            res.status(500).json({ message: 'Failed to update cooperative profile' });
+                        });
+                    }
+                    
+                    // Commit transaction
+                    db.commit((commitErr) => {
+                        if (commitErr) {
+                            return db.rollback(() => {
+                                console.error('Error committing transaction:', commitErr);
+                                res.status(500).json({ message: 'Failed to complete update' });
+                            });
+                        }
+                        
+                        res.json({ message: 'Cooperative account updated successfully' });
+                    });
+                });
+            });
+        });
+    });
+});
+
+// Delete cooperative (admin only)
+router.delete('/:cooperativeId', isAdmin, (req, res) => {
+    const { cooperativeId } = req.params;
+    
+    // Start transaction for safe deletion
+    db.beginTransaction((err) => {
+        if (err) {
+            console.error('Transaction error:', err);
+            return res.status(500).json({ message: 'Database error' });
+        }
+        
+        // First get the user_id from cooperatives table
+        db.query('SELECT user_id FROM cooperatives WHERE cooperative_id = ?', [cooperativeId], (err, results) => {
+            if (err) {
+                return db.rollback(() => {
+                    console.error('Error fetching cooperative:', err);
+                    res.status(500).json({ message: 'Failed to fetch cooperative' });
+                });
+            }
+            
+            if (results.length === 0) {
+                return db.rollback(() => {
+                    res.status(404).json({ message: 'Cooperative not found' });
+                });
+            }
+            
+            const userId = results[0].user_id;
+            
+            // Delete from cooperatives table
+            db.query('DELETE FROM cooperatives WHERE cooperative_id = ?', [cooperativeId], (err) => {
+                if (err) {
+                    return db.rollback(() => {
+                        console.error('Error deleting cooperative:', err);
+                        res.status(500).json({ message: 'Failed to delete cooperative' });
+                    });
+                }
+                
+                // Delete from users table
+                db.query('DELETE FROM users WHERE user_id = ?', [userId], (err) => {
+                    if (err) {
+                        return db.rollback(() => {
+                            console.error('Error deleting user:', err);
+                            res.status(500).json({ message: 'Failed to delete user account' });
+                        });
+                    }
+                    
+                    // Commit transaction
+                    db.commit((commitErr) => {
+                        if (commitErr) {
+                            return db.rollback(() => {
+                                console.error('Error committing transaction:', commitErr);
+                                res.status(500).json({ message: 'Failed to complete deletion' });
+                            });
+                        }
+                        
+                        res.json({ message: 'Cooperative account deleted successfully' });
+                    });
+                });
+            });
+        });
     });
 });
 

@@ -268,4 +268,143 @@ router.get('/:farmerId/products', (req, res) => {
     });
 });
 
+// Update farmer (admin only)
+router.put('/admin/:farmerId', isAdmin, (req, res) => {
+    const { farmerId } = req.params;
+    const { full_name, email, phone, farm_name, bio, location } = req.body;
+    
+    // Start transaction for safe update
+    db.beginTransaction((err) => {
+        if (err) {
+            console.error('Transaction error:', err);
+            return res.status(500).json({ message: 'Database error' });
+        }
+        
+        // Get farmer's user_id
+        db.query('SELECT user_id FROM farmers WHERE farmer_id = ?', [farmerId], (err, results) => {
+            if (err) {
+                return db.rollback(() => {
+                    console.error('Error fetching farmer:', err);
+                    res.status(500).json({ message: 'Failed to fetch farmer' });
+                });
+            }
+            
+            if (results.length === 0) {
+                return db.rollback(() => {
+                    res.status(404).json({ message: 'Farmer not found' });
+                });
+            }
+            
+            const userId = results[0].user_id;
+            
+            // Update users table
+            const userUpdateQuery = `
+                UPDATE users 
+                SET full_name = ?, email = ?, phone = ?
+                WHERE user_id = ?
+            `;
+            
+            db.query(userUpdateQuery, [full_name, email, phone, userId], (err) => {
+                if (err) {
+                    return db.rollback(() => {
+                        console.error('Error updating user:', err);
+                        res.status(500).json({ message: 'Failed to update user info' });
+                    });
+                }
+                
+                // Update farmers table
+                const farmerUpdateQuery = `
+                    UPDATE farmers 
+                    SET farm_name = ?, bio = ?, location = ?
+                    WHERE farmer_id = ?
+                `;
+                
+                db.query(farmerUpdateQuery, [farm_name, bio, location, farmerId], (err) => {
+                    if (err) {
+                        return db.rollback(() => {
+                            console.error('Error updating farmer:', err);
+                            res.status(500).json({ message: 'Failed to update farmer profile' });
+                        });
+                    }
+                    
+                    // Commit transaction
+                    db.commit((commitErr) => {
+                        if (commitErr) {
+                            return db.rollback(() => {
+                                console.error('Error committing transaction:', commitErr);
+                                res.status(500).json({ message: 'Failed to complete update' });
+                            });
+                        }
+                        
+                        res.json({ message: 'Farmer account updated successfully' });
+                    });
+                });
+            });
+        });
+    });
+});
+
+// Delete farmer (admin only)
+router.delete('/:farmerId', isAdmin, (req, res) => {
+    const { farmerId } = req.params;
+    
+    // Start transaction for safe deletion
+    db.beginTransaction((err) => {
+        if (err) {
+            console.error('Transaction error:', err);
+            return res.status(500).json({ message: 'Database error' });
+        }
+        
+        // First get the user_id from farmers table
+        db.query('SELECT user_id FROM farmers WHERE farmer_id = ?', [farmerId], (err, results) => {
+            if (err) {
+                return db.rollback(() => {
+                    console.error('Error fetching farmer:', err);
+                    res.status(500).json({ message: 'Failed to fetch farmer' });
+                });
+            }
+            
+            if (results.length === 0) {
+                return db.rollback(() => {
+                    res.status(404).json({ message: 'Farmer not found' });
+                });
+            }
+            
+            const userId = results[0].user_id;
+            
+            // Delete from farmers table
+            db.query('DELETE FROM farmers WHERE farmer_id = ?', [farmerId], (err) => {
+                if (err) {
+                    return db.rollback(() => {
+                        console.error('Error deleting farmer:', err);
+                        res.status(500).json({ message: 'Failed to delete farmer' });
+                    });
+                }
+                
+                // Delete from users table
+                db.query('DELETE FROM users WHERE user_id = ?', [userId], (err) => {
+                    if (err) {
+                        return db.rollback(() => {
+                            console.error('Error deleting user:', err);
+                            res.status(500).json({ message: 'Failed to delete user account' });
+                        });
+                    }
+                    
+                    // Commit transaction
+                    db.commit((commitErr) => {
+                        if (commitErr) {
+                            return db.rollback(() => {
+                                console.error('Error committing transaction:', commitErr);
+                                res.status(500).json({ message: 'Failed to complete deletion' });
+                            });
+                        }
+                        
+                        res.json({ message: 'Farmer account deleted successfully' });
+                    });
+                });
+            });
+        });
+    });
+});
+
 module.exports = router;
