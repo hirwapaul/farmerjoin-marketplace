@@ -9,15 +9,70 @@ function Dashboard() {
         orders: 0,
         revenue: 0
     });
+    const [farmers, setFarmers] = useState([]);
+    const [showAddFarmer, setShowAddFarmer] = useState(false);
+    const [newFarmer, setNewFarmer] = useState({
+        full_name: "",
+        email: "",
+        phone: "",
+        cooperative_name: "",
+        location: ""
+    });
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         // Get user info from localStorage or API
         const token = localStorage.getItem("token");
         if (token) {
             // User is logged in - fetch user data
-            setUser({ name: "User" }); // Placeholder - would fetch from API
+            setUser({ name: "Admin" }); // Placeholder - would fetch from API
+            // Fetch farmers list
+            fetchFarmers();
         }
     }, []);
+
+    const fetchFarmers = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await API.get("/admin/farmers", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setFarmers(response.data || []);
+        } catch (error) {
+            console.error("Error fetching farmers:", error);
+            // For demo, set empty array
+            setFarmers([]);
+        }
+    };
+
+    const handleAddFarmer = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setMessage("");
+
+        try {
+            const token = localStorage.getItem("token");
+            const response = await API.post("/admin/create-farmer", newFarmer, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setMessage(`Farmer account created! Email: ${newFarmer.email}, Password: ${response.data.password}`);
+            setNewFarmer({
+                full_name: "",
+                email: "",
+                phone: "",
+                cooperative_name: "",
+                location: ""
+            });
+            setShowAddFarmer(false);
+            fetchFarmers(); // Refresh farmers list
+        } catch (error) {
+            setMessage("Error creating farmer account. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -25,10 +80,10 @@ function Dashboard() {
                 {/* Welcome Header */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-800">
-                        Welcome back!
+                        Admin Dashboard
                     </h1>
                     <p className="mt-2 text-gray-600">
-                        Manage your products and view your dashboard
+                        Manage products, orders, and farmer accounts
                     </p>
                 </div>
 
@@ -39,7 +94,7 @@ function Dashboard() {
                         <div className="flex items-center">
                             <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
                                 <svg className="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8-8 4m16 0l-8 4-8-8 4" />
                                 </svg>
                             </div>
                             <div className="ml-4">
@@ -47,6 +102,120 @@ function Dashboard() {
                                 <p className="text-2xl font-semibold text-gray-800">{stats.products}</p>
                             </div>
                         </div>
+                    </div>
+
+                    {/* Manage Farmers Section */}
+                    <div className="bg-white rounded-xl shadow-md p-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-xl font-semibold text-gray-800">Manage Farmers</h2>
+                            <button
+                                onClick={() => setShowAddFarmer(!showAddFarmer)}
+                                className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+                            >
+                                {showAddFarmer ? 'Cancel' : 'Add Farmer'}
+                            </button>
+                        </div>
+
+                        {/* Add Farmer Form */}
+                        {showAddFarmer && (
+                            <form onSubmit={handleAddFarmer} className="space-y-4">
+                                {message && (
+                                    <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg text-sm mb-4">
+                                        {message}
+                                    </div>
+                                )}
+
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                        <input
+                                            type="text"
+                                            value={newFarmer.full_name}
+                                            onChange={(e) => setNewFarmer({...newFarmer, full_name: e.target.value})}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <input
+                                            type="email"
+                                            value={newFarmer.email}
+                                            onChange={(e) => setNewFarmer({...newFarmer, email: e.target.value})}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                        <input
+                                            type="tel"
+                                            value={newFarmer.phone}
+                                            onChange={(e) => setNewFarmer({...newFarmer, phone: e.target.value})}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Cooperative Name</label>
+                                        <input
+                                            type="text"
+                                            value={newFarmer.cooperative_name}
+                                            onChange={(e) => setNewFarmer({...newFarmer, cooperative_name: e.target.value})}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                                    <input
+                                        type="text"
+                                        value={newFarmer.location}
+                                        onChange={(e) => setNewFarmer({...newFarmer, location: e.target.value})}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="flex justify-end">
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 disabled:opacity-50 transition-colors"
+                                    >
+                                        {loading ? 'Creating...' : 'Create Account'}
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+
+                        {/* Farmers List */}
+                        {!showAddFarmer && (
+                            <div className="mt-6">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Registered Farmers</h3>
+                                <div className="space-y-2">
+                                    {farmers.map((farmer, index) => (
+                                        <div key={index} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <p className="font-medium text-gray-800">{farmer.full_name}</p>
+                                                    <p className="text-sm text-gray-600">{farmer.email}</p>
+                                                    <p className="text-sm text-gray-600">{farmer.cooperative_name}</p>
+                                                </div>
+                                                <div className="text-sm text-gray-500">
+                                                    <p>{farmer.location}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Orders Stats */}

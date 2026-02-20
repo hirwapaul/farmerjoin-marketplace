@@ -16,6 +16,10 @@ const ProtectedRoute = ({ children, role }) => {
       return <Navigate to="/buyer-dashboard" replace />;
     } else if (user.role === "farmer") {
       return <Navigate to="/dashboard" replace />;
+    } else if (user.role === "cooperative") {
+      return <Navigate to="/cooperative-dashboard" replace />;
+    } else if (user.role === "admin") {
+      return <Navigate to="/admin-dashboard" replace />;
     } else {
       return <Navigate to="/" replace />;
     }

@@ -2,9 +2,12 @@ const connection=require('./dbConnection.js');
 const express= require ('express');
 const cors=require('cors');
 const path = require('path');
+const bcrypt=require('bcryptjs');
 const uploadRoutes = require('./routes/uploads');
 const productRoutes = require('./routes/products');
 const farmerRoutes = require('./routes/farmers');
+const authRoutes = require('./routes/auth');
+const cooperativeRoutes = require('./routes/cooperatives');
 const app=express();
 const port=4000;
 app.use(express.json());
@@ -16,9 +19,15 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Use upload routes
 app.use('/api', uploadRoutes);
 
+// Use auth routes
+app.use('/auth', authRoutes);
+
 // Use product and farmer routes
 app.use('/products', productRoutes);
 app.use('/farmers', farmerRoutes);
+
+// Use cooperative routes
+app.use('/cooperative', cooperativeRoutes);
 
 app.post('/create_account',(req,res) => {
     
@@ -44,28 +53,48 @@ else{
 }
     });
 });
-//post method
-app.post('/login',(req,res) => {
-    const {password}=req.body;
 
-    connection.query("select * from  users where password=?",[password],(err,results)=>{
+// Fixed login endpoint with email and bcrypt
+app.post('/login', async (req,res) => {
+    const {email, password} = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    connection.query("select * from users where email=?", [email], async (err,results)=>{
         if(err){
             console.error('query error',err);
+            return res.status(500).json({ message: 'Database error' });
         }
         else if(results.length === 0){
-            res.json('account not found');
+            return res.status(404).json({ message: 'User not found' });
         }
-   else{ 
-    const users=results[0];
-    if(users.password === password){
-        res.json({msg:'welcome! to your account!'});
-    }
-    
-}
-
+        else{ 
+            const user = results[0];
+            
+            try {
+                const validPassword = await bcrypt.compare(password, user.password);
+                if (!validPassword) {
+                    return res.status(401).json({ message: 'Invalid password' });
+                }
+                
+                res.json({ 
+                    message: 'Login successful',
+                    user: {
+                        user_id: user.user_id,
+                        full_name: user.full_name,
+                        email: user.email,
+                        role: user.role
+                    }
+                });
+            } catch (compareError) {
+                console.error('Password comparison error:', compareError);
+                return res.status(500).json({ message: 'Authentication error' });
+            }
+        }
+    });
 });
-});
-
 
 app.put("/forgot_password",(req,res) => {
         const {username}=req.body;
@@ -93,6 +122,7 @@ app.put("/forgot_password",(req,res) => {
        
     });
 });
+
 app.get('/users',(req,res)=>{
     connection.query("select* from users",(err,results)=>{
         if(err) console.error(err);
@@ -100,7 +130,9 @@ app.get('/users',(req,res)=>{
 
     });
 });
-app.delete('/delete/:id',(req,results)=>{
+
+app.delete('/delete/:id',(req,res)=>{
+    const {id} = req.params;
     connection.query('delete from users where id=?',[id],(err,result)=>{
         if(err) throw err;
         else{
@@ -109,13 +141,10 @@ app.delete('/delete/:id',(req,results)=>{
     });
 });
 
-
-
 app.use((req,res)=>{
     res.status(404).json({ error:'invalid API'});
 });
+
 app.listen(port,()=>{
     console.log(`server runing on port${port}`);
 });
-
- 

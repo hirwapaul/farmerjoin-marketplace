@@ -170,7 +170,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `full_name`, `email`, `phone`, `password`, `role`, `created_at`) VALUES
-(23, 'Bizumutima epaphrodite', 'bizumutimaepa@gmail.com', '0785018691', '$2b$10$j6Q1aB85jEW/.KvB8TMLtOj98LNpnf5crKRxf6/5K1TZZYWArSp8C', 'farmer', '2026-02-15 17:15:15');
+(24, 'System Administrator', 'admin@farmerjoin.rw', '0785018691', '$2a$10$N9qo8uLOickgx2ZERZx6Jd/6B7uL3Nq4cKuY0Sx6aM', 'admin', '2026-02-15 17:15:15');
 
 --
 -- Indexes for dumped tables

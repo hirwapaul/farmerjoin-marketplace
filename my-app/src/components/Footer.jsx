@@ -9,8 +9,8 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Company Info */}
                     <div className="col-span-1 md:col-span-2">
-                        <h3 className="text-2xl font-bold text-primary-500 mb-4">FarmerJoin</h3>
-                        <p className="text-gray-300 mb-4">
+                        <h3 className="text-2xl font-heading font-bold text-primary-500 mb-4 tracking-tight">FarmerJoin</h3>
+                        <p className="text-gray-300 mb-4 font-secondary leading-relaxed">
                             Connecting farmers directly with buyers. Fresh produce at fair prices.
                         </p>
                         <div className="flex space-x-4">
@@ -34,16 +34,11 @@ const Footer = () => {
 
                     {/* Quick Links */}
                     <div>
-                        <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
+                        <h4 className="text-lg font-heading font-semibold mb-4 tracking-tight">Quick Links</h4>
                         <ul className="space-y-2">
                             <li>
                                 <Link to="/" className="text-gray-300 hover:text-primary-500 transition-colors">
                                     Products
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/register" className="text-gray-300 hover:text-primary-500 transition-colors">
-                                    Register
                                 </Link>
                             </li>
                             <li>
@@ -61,7 +56,7 @@ const Footer = () => {
 
                     {/* Contact */}
                     <div>
-                        <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
+                        <h4 className="text-lg font-heading font-semibold mb-4 tracking-tight">Contact Us</h4>
                         <ul className="space-y-2 text-gray-300">
                             <li className="flex items-center space-x-2">
                                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

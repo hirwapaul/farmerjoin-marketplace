@@ -11,40 +11,34 @@ function Navbar() {
                 <div className="flex justify-between h-16">
                     <div className="flex items-center">
                         <Link to="/" className="flex items-center space-x-2">
-                            <span className="text-white text-xl font-bold">FarmerJoin</span>
+                            <span className="text-white text-xl font-heading font-bold tracking-tight">FarmerJoin</span>
                         </Link>
                     </div>
                     
                     {/* Desktop Menu */}
                     <div className="hidden md:flex items-center space-x-4">
                         <Link 
+                            to="/about" 
+                            className="text-white hover:bg-primary-700 px-3 py-2 rounded-md font-medium transition-colors font-ui tracking-wide"
+                        >
+                            About
+                        </Link>
+                        <Link 
                             to="/products" 
-                            className="text-white hover:bg-primary-700 px-3 py-2 rounded-md font-medium transition-colors"
+                            className="text-white hover:bg-primary-700 px-3 py-2 rounded-md font-medium transition-colors font-ui tracking-wide"
                         >
                             Products
                         </Link>
-                        <Link 
-                            to="/subscription-boxes"
-                            className="text-white hover:bg-primary-700 px-3 py-2 rounded-md font-medium transition-colors"
-                        >
-                            Subscription
-                        </Link>
                         <CartIcon />
                         <Link 
-                            to="/register" 
-                            className="text-white hover:bg-primary-700 px-3 py-2 rounded-md font-medium transition-colors"
-                        >
-                            Register
-                        </Link>
-                        <Link 
                             to="/login" 
-                            className="text-white hover:bg-primary-700 px-3 py-2 rounded-md font-medium transition-colors"
+                            className="text-white hover:bg-primary-700 px-3 py-2 rounded-md font-medium transition-colors font-ui tracking-wide"
                         >
                             Login
                         </Link>
                         <Link 
                             to="/dashboard" 
-                            className="bg-white text-primary-600 hover:bg-gray-100 px-4 py-2 rounded-lg font-medium transition-colors"
+                            className="bg-white text-primary-600 hover:bg-gray-100 px-4 py-2 rounded-lg font-medium transition-colors font-ui tracking-wide"
                         >
                             Dashboard
                         </Link>
@@ -73,27 +67,21 @@ function Navbar() {
                 <div className="md:hidden bg-primary-600">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         <Link 
+                            to="/about" 
+                            className="text-white hover:bg-primary-700 block px-3 py-2 rounded-md font-medium"
+                        >
+                            About
+                        </Link>
+                        <Link 
                             to="/products" 
                             className="text-white hover:bg-primary-700 block px-3 py-2 rounded-md font-medium"
                         >
                             Products
                         </Link>
-                        <Link 
-                            to="/subscription-boxes"
-                            className="text-white hover:bg-primary-700 block px-3 py-2 rounded-md font-medium"
-                        >
-                            Subscription Boxes
-                        </Link>
                         <div className="flex items-center justify-between">
                             <span className="text-white px-3 py-2 font-medium">Cart</span>
                             <CartIcon />
                         </div>
-                        <Link 
-                            to="/register" 
-                            className="text-white hover:bg-primary-700 block px-3 py-2 rounded-md font-medium"
-                        >
-                            Register
-                        </Link>
                         <Link 
                             to="/login" 
                             className="text-white hover:bg-primary-700 block px-3 py-2 rounded-md font-medium"

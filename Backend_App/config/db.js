@@ -21,6 +21,32 @@ db.connect(err => {
                 console.log("Photo column added to users table");
             }
         });
+
+        // Create cooperatives table if it doesn't exist
+        const createCooperativesTable = `
+            CREATE TABLE IF NOT EXISTS cooperatives (
+                cooperative_id INT(11) NOT NULL AUTO_INCREMENT,
+                user_id INT(11) NOT NULL,
+                cooperative_name VARCHAR(150) DEFAULT NULL,
+                location VARCHAR(255) DEFAULT NULL,
+                phone VARCHAR(20) DEFAULT NULL,
+                description TEXT DEFAULT NULL,
+                profile_photo VARCHAR(255) DEFAULT NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+                updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
+                PRIMARY KEY (cooperative_id),
+                KEY fk_cooperatives_user (user_id),
+                CONSTRAINT fk_cooperatives_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+            )
+        `;
+        
+        db.query(createCooperativesTable, (err, result) => {
+            if (err) {
+                console.log("Cooperatives table may already exist or table issue:", err.message);
+            } else {
+                console.log("Cooperatives table created successfully");
+            }
+        });
     }
 });
 

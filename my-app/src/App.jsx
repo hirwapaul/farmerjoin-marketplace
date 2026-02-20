@@ -2,11 +2,14 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 
 // Pages
 import Home from "./pages/Home";
+import About from "./pages/About";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import FarmerDashboard from "./pages/FarmerDashboard";
 import BuyerDashboard from "./pages/BuyerDashboard";
+import CooperativeDashboard from "./pages/CooperativeDashboard";
 import AddProduct from "./pages/AddProduct";
 import EditProduct from "./pages/EditProduct";
 import Products from "./pages/Products";
@@ -35,6 +38,7 @@ function App() {
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
               <Route path="/products" element={<Products />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
@@ -50,6 +54,26 @@ function App() {
                 element={
                   <ProtectedRoute role="buyer">
                     <BuyerDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Admin Dashboard (protected) */}
+              <Route
+                path="/admin-dashboard"
+                element={
+                  <ProtectedRoute role="admin">
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Cooperative Dashboard (protected) */}
+              <Route
+                path="/cooperative-dashboard"
+                element={
+                  <ProtectedRoute role="cooperative">
+                    <CooperativeDashboard />
                   </ProtectedRoute>
                 }
               />
