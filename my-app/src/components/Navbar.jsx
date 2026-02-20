@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import CartIcon from "./CartIcon";
 
 function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -23,13 +22,6 @@ function Navbar() {
                         >
                             About
                         </Link>
-                        <Link 
-                            to="/products" 
-                            className="text-white hover:bg-primary-700 px-3 py-2 rounded-md font-medium transition-colors font-ui tracking-wide"
-                        >
-                            Products
-                        </Link>
-                        <CartIcon />
                         <Link 
                             to="/login" 
                             className="text-white hover:bg-primary-700 px-3 py-2 rounded-md font-medium transition-colors font-ui tracking-wide"
@@ -72,16 +64,6 @@ function Navbar() {
                         >
                             About
                         </Link>
-                        <Link 
-                            to="/products" 
-                            className="text-white hover:bg-primary-700 block px-3 py-2 rounded-md font-medium"
-                        >
-                            Products
-                        </Link>
-                        <div className="flex items-center justify-between">
-                            <span className="text-white px-3 py-2 font-medium">Cart</span>
-                            <CartIcon />
-                        </div>
                         <Link 
                             to="/login" 
                             className="text-white hover:bg-primary-700 block px-3 py-2 rounded-md font-medium"

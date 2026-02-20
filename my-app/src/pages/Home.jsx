@@ -1,98 +1,198 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import HeroSlider from "../components/HeroSlider";
 
 const Home = () => {
+    const [stats, setStats] = useState({
+        farmers: 0,
+        products: 0,
+        orders: 0,
+        cooperatives: 0
+    });
+
+    useEffect(() => {
+        // Mock data for demonstration
+        setStats({
+            farmers: 1250,
+            products: 4580,
+            orders: 12350,
+            cooperatives: 45
+        });
+    }, []);
 
     return (
         <div className="relative min-h-screen">
-            {/* Hero Slider */}
+            {/* Hero Section */}
             <HeroSlider />
             
-            {/* Call to Action */}
-            <div className="bg-gradient-to-r from-green-600 to-emerald-600 py-8">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 className="text-2xl md:text-3xl font-heading font-bold text-white mb-4 text-shadow-premium tracking-tight">
-                        FarmerJoin
-                    </h2>
-                    <p className="text-lg text-white mb-6 opacity-90 font-secondary leading-relaxed">
-                        Connecting farmers directly with buyers. Fresh produce at fair prices.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link
-                            to="/products"
-                            className="bg-white hover:bg-gray-100 text-primary-600 font-semibold py-2 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg font-ui"
-                        >
-                            Browse Products
-                        </Link>
+            {/* Main Content Section */}
+            <div className="bg-white py-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-16">
+                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                            Agricultural Technology, <span className="text-green-600">Redefined</span>
+                        </h1>
+                        <h2 className="text-2xl md:text-3xl text-gray-700 mb-8 font-light">
+                            We help Rwandan farmers integrate data, technology, and field-level agronomy to deliver better outcomes
+                        </h2>
+                        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                            FarmerJoin is the digital marketplace partner for agriculture, supporting farmers, buyers, and cooperatives 
+                            with solutions designed to scale across complex agricultural environments in Rwanda.
+                        </p>
+                        <div className="mt-8">
+                            <Link
+                                to="/register"
+                                className="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                            >
+                                Get Started
+                                <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Capabilities Grid */}
+                    <div className="mb-20">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-12 text-center">What We Do</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            <div className="group">
+                                <h4 className="text-lg font-semibold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">
+                                    Digital Marketplace
+                                </h4>
+                                <p className="text-gray-600 leading-relaxed">
+                                    Connect farmers directly with buyers through our secure digital platform, eliminating middlemen and ensuring fair prices.
+                                </p>
+                            </div>
+                            <div className="group">
+                                <h4 className="text-lg font-semibold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">
+                                    Farm Management
+                                </h4>
+                                <p className="text-gray-600 leading-relaxed">
+                                    Tools and insights to help farmers manage their operations, track production, and optimize yields.
+                                </p>
+                            </div>
+                            <div className="group">
+                                <h4 className="text-lg font-semibold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">
+                                    Cooperative Support
+                                </h4>
+                                <p className="text-gray-600 leading-relaxed">
+                                    Empowering agricultural cooperatives with technology to scale their operations and reach more markets.
+                                </p>
+                            </div>
+                            <div className="group">
+                                <h4 className="text-lg font-semibold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">
+                                    Data & Analytics
+                                </h4>
+                                <p className="text-gray-600 leading-relaxed">
+                                    Real-time market data and analytics to help farmers make informed decisions about their crops and pricing.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Statistics Section */}
+                    <div className="bg-gray-50 rounded-2xl p-12">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                            <div>
+                                <div className="text-4xl font-bold text-green-600 mb-2">{stats.farmers}+</div>
+                                <div className="text-gray-600 font-medium">Active Farmers</div>
+                            </div>
+                            <div>
+                                <div className="text-4xl font-bold text-green-600 mb-2">{stats.products}+</div>
+                                <div className="text-gray-600 font-medium">Products Listed</div>
+                            </div>
+                            <div>
+                                <div className="text-4xl font-bold text-green-600 mb-2">{stats.orders}+</div>
+                                <div className="text-gray-600 font-medium">Orders Completed</div>
+                            </div>
+                            <div>
+                                <div className="text-4xl font-bold text-green-600 mb-2">{stats.cooperatives}+</div>
+                                <div className="text-gray-600 font-medium">Cooperatives</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Features Section */}
-            <div className="bg-gray-50 py-12">
+            <div className="bg-gray-900 py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-2xl md:text-3xl font-heading font-bold text-center text-gray-800 mb-8 tracking-tight">
-                        Why Choose FarmerJoin?
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {/* Feature 1 */}
-                        <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow duration-300">
-                            <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <svg className="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <h3 className="text-lg font-heading font-semibold text-gray-800 mb-2 tracking-tight">Fair Prices</h3>
-                            <p className="text-sm text-gray-600 font-secondary leading-relaxed">
-                                Get the best prices for your produce. No middlemen, just fair trade.
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div>
+                            <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                                Enterprise Technology. Built for Agriculture.
+                            </h3>
+                            <p className="text-gray-300 text-lg leading-relaxed mb-8">
+                                FarmerJoin is the digital marketplace partner for Rwandan agriculture, supporting farmers, cooperatives, 
+                                and buyers with solutions designed to scale across complex agricultural environments.
                             </p>
+                            <p className="text-gray-300 text-lg leading-relaxed mb-8">
+                                We deliver the platform that helps agricultural leaders integrate data, technology, 
+                                and field-level agronomy to deliver auditable, monetizable outcomes.
+                            </p>
+                            <Link
+                                to="/about"
+                                className="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300"
+                            >
+                                Learn More
+                                <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </Link>
                         </div>
-
-                        {/* Feature 2 */}
-                        <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow duration-300">
-                            <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <svg className="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-gray-800 p-6 rounded-xl">
+                                <div className="text-green-400 text-3xl mb-4">🌱</div>
+                                <h4 className="text-white font-semibold mb-2">Sustainable Farming</h4>
+                                <p className="text-gray-400 text-sm">Promoting environmentally friendly agricultural practices</p>
                             </div>
-                            <h3 className="text-lg font-heading font-semibold text-gray-800 mb-2 tracking-tight">Fresh Produce</h3>
-                            <p className="text-sm text-gray-600 font-secondary leading-relaxed">
-                                Fresh, locally sourced produce directly from farmers to your table.
-                            </p>
-                        </div>
-
-                        {/* Feature 3 */}
-                        <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow duration-300">
-                            <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                <svg className="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                </svg>
+                            <div className="bg-gray-800 p-6 rounded-xl">
+                                <div className="text-green-400 text-3xl mb-4">📊</div>
+                                <h4 className="text-white font-semibold mb-2">Data-Driven</h4>
+                                <p className="text-gray-400 text-sm">Real-time insights for better decision making</p>
                             </div>
-                            <h3 className="text-lg font-heading font-semibold text-gray-800 mb-2 tracking-tight">Trusted Platform</h3>
-                            <p className="text-sm text-gray-600 font-secondary leading-relaxed">
-                                Secure and reliable platform with verified farmers and buyers.
-                            </p>
+                            <div className="bg-gray-800 p-6 rounded-xl">
+                                <div className="text-green-400 text-3xl mb-4">🤝</div>
+                                <h4 className="text-white font-semibold mb-2">Fair Trade</h4>
+                                <p className="text-gray-400 text-sm">Ensuring fair prices for farmers</p>
+                            </div>
+                            <div className="bg-gray-800 p-6 rounded-xl">
+                                <div className="text-green-400 text-3xl mb-4">🚀</div>
+                                <h4 className="text-white font-semibold mb-2">Scalable</h4>
+                                <p className="text-gray-400 text-sm">Technology that grows with your business</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* CTA Section */}
-            <div className="bg-primary-600 py-8">
+            <div className="bg-green-600 py-16">
                 <div className="max-w-4xl mx-auto px-4 text-center">
-                    <h2 className="text-2xl font-heading font-bold text-white mb-3 text-shadow-premium tracking-tight">
-                        Ready to Get Started?
-                    </h2>
-                    <p className="text-primary-100 mb-6 text-base font-secondary leading-relaxed">
-                        Join thousands of farmers and buyers already using FarmerJoin.
+                    <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                        Ready to Transform Your Agricultural Business?
+                    </h3>
+                    <p className="text-green-100 text-lg mb-8">
+                        Join thousands of farmers and buyers already using FarmerJoin to grow their agricultural enterprises.
                     </p>
-                    <Link
-                        to="/register"
-                        className="bg-white text-primary-600 hover:bg-gray-100 font-semibold py-2 px-6 rounded-lg transition-all duration-300 font-ui"
-                    >
-                        Register Now
-                    </Link>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Link
+                            to="/register"
+                            className="bg-white hover:bg-gray-100 text-green-600 font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                        >
+                            Register as Farmer
+                        </Link>
+                        <Link
+                            to="/register"
+                            className="border-2 border-white hover:bg-white hover:text-green-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105"
+                        >
+                            Register as Buyer
+                        </Link>
+                    </div>
+                    <p className="text-green-100 mt-6 text-sm">
+                        Already have an account? <Link to="/login" className="text-white hover:text-green-100 underline">Sign in here</Link>
+                    </p>
                 </div>
             </div>
         </div>

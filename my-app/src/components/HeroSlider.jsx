@@ -4,52 +4,54 @@ const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [direction, setDirection] = useState('next');
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const slides = [
     {
-      image: '',
-      title: 'Fresh Maize',
-      subtitle: 'Rwanda Golden Corn',
-      description: 'Premium quality maize from Rwandan farms',
-      gradient: 'from-yellow-400 to-orange-500'
+      image: '/images/farmer-field.jpg',
+      title: 'Agricultural Technology',
+      subtitle: 'Redefined for Rwanda',
+      description: 'Enterprise solutions connecting farmers to digital markets',
+      gradient: 'from-green-700/80 to-emerald-800/80'
     },
     {
-      image: '',
-      title: 'Rice Fields',
-      subtitle: 'Rwanda Rice Farming',
-      description: 'High-quality rice from Rwandan valleys',
-      gradient: 'from-green-400 to-emerald-600'
+      image: '/images/crops-harvest.jpg',
+      title: 'Data-Driven Farming',
+      subtitle: 'Smart Agriculture',
+      description: 'Real-time insights for better agricultural decisions',
+      gradient: 'from-blue-700/80 to-indigo-800/80'
     },
     {
-      image: '',
-      title: 'Fresh Cassava',
-      subtitle: 'Rwanda Cassava Farms',
-      description: 'Nutritious cassava from local farmers',
-      gradient: 'from-amber-400 to-yellow-600'
+      image: '/images/farm-field.jpg',
+      title: 'Digital Marketplace',
+      subtitle: 'Direct Connections',
+      description: 'Eliminating middlemen, ensuring fair prices for farmers',
+      gradient: 'from-amber-700/80 to-orange-800/80'
     },
     {
-      image: '',
-      title: 'Irish Potatoes',
-      subtitle: 'Rwanda Potato Harvest',
-      description: 'Fresh potatoes from Rwandan highlands',
-      gradient: 'from-brown-400 to-amber-600'
+      image: '/images/farming-equipment.jpg',
+      title: 'Sustainable Growth',
+      subtitle: 'Future of Farming',
+      description: 'Technology that scales with your agricultural business',
+      gradient: 'from-emerald-700/80 to-teal-800/80'
     },
     {
-      image: '',
-      title: 'Soya Beans',
-      subtitle: 'Rwanda Soya Production',
-      description: 'Protein-rich soya beans from Rwanda',
-      gradient: 'from-green-500 to-lime-600'
+      image: '/images/farmers-market.jpg',
+      title: 'Cooperative Power',
+      subtitle: 'Together We Grow',
+      description: 'Empowering agricultural communities across Rwanda',
+      gradient: 'from-purple-700/80 to-pink-800/80'
     }
   ];
 
   useEffect(() => {
+    setIsLoaded(true);
     if (!isPlaying) return;
     
     const timer = setInterval(() => {
       setDirection('next');
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 4000);
+    }, 5000);
 
     return () => clearInterval(timer);
   }, [isPlaying, slides.length]);
@@ -84,70 +86,119 @@ const HeroSlider = () => {
       : 'translate-x-full opacity-0 scale-95';
   };
 
+  const getTextAnimation = (index, delay) => {
+    if (index === currentSlide && isLoaded) {
+      return 'opacity-100 translate-y-0';
+    }
+    return 'opacity-0 translate-y-8';
+  };
+
   return (
-    <div className="relative h-[350px] overflow-hidden">
+    <div className="relative h-[400px] overflow-hidden bg-gray-900">
       {/* Slides Container */}
       <div className="relative h-full">
         {slides.map((slide, index) => (
           <div
             key={index}
-            className={`absolute inset-0 bg-gradient-to-br ${slide.gradient} transition-all duration-700 ease-in-out flex items-center justify-center ${getSlideAnimation(index)}`}
+            className={`absolute inset-0 transition-all duration-1000 ease-in-out flex items-center justify-center ${getSlideAnimation(index)}`}
           >
-            <div className="text-center text-white px-4 max-w-4xl">
-              <h1 
-                className="text-5xl md:text-7xl font-heading font-bold mb-6 text-shadow-premium transform transition-all duration-700 delay-100 tracking-tight"
-                style={{
-                  animation: index === currentSlide ? 'slideUp 0.8s ease-out' : 'none'
-                }}
+            {/* Background Image with Professional Effects */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              style={{
+                backgroundImage: `url(${slide.image})`,
+                filter: index === currentSlide ? 'brightness(0.8) contrast(1.05)' : 'brightness(0.6) contrast(0.95)',
+                transform: index === currentSlide ? 'scale(1.05)' : 'scale(1.1)',
+                transition: 'all 8s ease-in-out'
+              }}
+            />
+            
+            {/* Professional Gradient Overlay */}
+            <div 
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(135deg, 
+                  rgba(0,0,0,0.3) 0%, 
+                  rgba(0,0,0,0.5) 50%, 
+                  rgba(0,0,0,0.7) 100%)`
+              }}
+            />
+            <div className={`absolute inset-0 bg-gradient-to-br ${slide.gradient}`}></div>
+            
+            {/* Animated Light Leaks */}
+            {index === currentSlide && (
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute top-0 left-1/4 w-64 h-64 bg-yellow-400/8 rounded-full blur-2xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-blue-400/8 rounded-full blur-2xl animate-pulse animation-delay-2000"></div>
+                <div className="absolute top-1/2 left-0 w-64 h-64 bg-green-400/8 rounded-full blur-2xl animate-pulse animation-delay-4000"></div>
+              </div>
+            )}
+            
+            {/* Content */}
+            <div className="relative z-20 text-center text-white px-4 max-w-4xl">
+              <div 
+                className={`transition-all duration-1000 delay-200 ${getTextAnimation(index, 200)}`}
               >
-                {slide.title}
-              </h1>
-              <p 
-                className="text-2xl md:text-3xl mb-4 font-secondary font-light drop-shadow-lg transform transition-all duration-700 delay-200 tracking-wide"
-                style={{
-                  animation: index === currentSlide ? 'slideUp 0.8s ease-out 0.2s both' : 'none'
-                }}
+                <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight tracking-tight">
+                  {slide.title}
+                </h1>
+              </div>
+              <div 
+                className={`transition-all duration-1000 delay-400 ${getTextAnimation(index, 400)}`}
               >
-                {slide.subtitle}
-              </p>
-              <p 
-                className="text-lg md:text-xl max-w-2xl mx-auto opacity-90 font-body transform transition-all duration-700 delay-300 leading-relaxed"
-                style={{
-                  animation: index === currentSlide ? 'slideUp 0.8s ease-out 0.4s both' : 'none'
-                }}
+                <h2 className="text-xl md:text-3xl font-light mb-4 leading-tight">
+                  {slide.subtitle}
+                </h2>
+              </div>
+              <div 
+                className={`transition-all duration-1000 delay-600 ${getTextAnimation(index, 600)}`}
               >
-                {slide.description}
-              </p>
+                <p className="text-base md:text-lg max-w-3xl mx-auto leading-relaxed font-light">
+                  {slide.description}
+                </p>
+              </div>
+              <div 
+                className={`transition-all duration-1000 delay-800 ${getTextAnimation(index, 800)}`}
+              >
+                <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+                  <button className="bg-white hover:bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-xl">
+                    Get Started
+                  </button>
+                  <button className="border-2 border-white hover:bg-white hover:text-gray-900 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                    Learn More
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Navigation Arrows */}
+      {/* Enhanced Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 backdrop-blur-sm hover:bg-opacity-30 text-white p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 border border-white border-opacity-30"
+        className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-lg hover:bg-white/20 text-white p-3 rounded-full shadow-xl transition-all duration-300 hover:scale-110 border border-white/30 z-30"
         aria-label="Previous slide"
       >
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 backdrop-blur-sm hover:bg-opacity-30 text-white p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 border border-white border-opacity-30"
+        className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/10 backdrop-blur-lg hover:bg-white/20 text-white p-3 rounded-full shadow-xl transition-all duration-300 hover:scale-110 border border-white/30 z-30"
         aria-label="Next slide"
       >
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </button>
 
-      {/* Play/Pause Button */}
+      {/* Enhanced Play/Pause Button */}
       <button
         onClick={togglePlayPause}
-        className="absolute top-4 right-4 bg-white bg-opacity-20 backdrop-blur-sm hover:bg-opacity-30 text-white p-3 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 border border-white border-opacity-30"
+        className="absolute top-6 right-6 bg-white/10 backdrop-blur-lg hover:bg-white/20 text-white p-3 rounded-full shadow-xl transition-all duration-300 hover:scale-110 border border-white/30 z-30"
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (
@@ -162,32 +213,33 @@ const HeroSlider = () => {
         )}
       </button>
 
-      {/* Advanced Slide Indicators */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex items-center space-x-3">
+      {/* Professional Slide Indicators */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex items-center space-x-3 z-30">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`relative transition-all duration-300 ${
+            className={`relative transition-all duration-500 ${
               index === currentSlide
-                ? 'w-12 h-3 bg-white rounded-full'
-                : 'w-3 h-3 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full'
+                ? 'w-12 h-2 bg-white rounded-full shadow-lg'
+                : 'w-2 h-2 bg-white/40 hover:bg-white/60 rounded-full'
             }`}
             aria-label={`Go to slide ${index + 1}`}
           >
             {index === currentSlide && (
-              <div className="absolute inset-0 bg-white rounded-full animate-pulse" />
+              <div className="absolute inset-0 bg-white rounded-full animate-pulse shadow-lg"></div>
             )}
           </button>
         ))}
       </div>
 
-      {/* Progress Bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-white bg-opacity-20">
+      {/* Enhanced Progress Bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-30">
         <div 
-          className="h-full bg-white transition-all duration-1000 ease-linear"
+          className="h-full bg-gradient-to-r from-green-400 to-emerald-500 transition-all duration-5000 ease-linear shadow-lg"
           style={{
-            width: `${((currentSlide + 1) / slides.length) * 100}%`
+            width: isPlaying ? `${((currentSlide + 1) / slides.length) * 100}%` : `${((currentSlide + 1) / slides.length) * 100}%`,
+            boxShadow: '0 0 10px rgba(52, 211, 153, 0.5)'
           }}
         />
       </div>
@@ -203,6 +255,14 @@ const HeroSlider = () => {
             opacity: 1;
             transform: translateY(0);
           }
+        }
+        
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        
+        .animation-delay-4000 {
+          animation-delay: 4s;
         }
       `}</style>
     </div>
