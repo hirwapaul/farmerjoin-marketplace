@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import FarmerDashboard from "./pages/FarmerDashboard";
@@ -36,6 +37,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="/farmer/:farmerId" element={<FarmerProfile />} />
             <Route path="/subscription-boxes" element={<SubscriptionBoxes />} />

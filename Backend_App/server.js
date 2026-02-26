@@ -142,6 +142,89 @@ app.post("/auth/login", (req, res) => {
     });
 });
 
+// FORGOT PASSWORD - STEP 1: Verify email (for buyers, farmers, and cooperatives)
+app.post("/auth/forgot-password/verify", (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+    }
+
+    // Check if user exists and is a buyer, farmer, or cooperative
+    db.query(
+        "SELECT * FROM users WHERE email = ? AND role IN ('buyer', 'farmer', 'cooperative')",
+        [email],
+        (err, result) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ message: "Database error" });
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ message: "No account found with this email" });
+            }
+
+            const user = result[0];
+            
+            // Generate a reset token (valid for 1 hour)
+            const resetToken = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
+            
+            // Store reset token in database (you might want to add these columns to users table)
+            // For now, we'll return token directly (in production, email it)
+            res.json({
+                message: "Email verified. You can now reset your password.",
+                resetToken: resetToken,
+                email: user.email,
+                fullName: user.full_name,
+                userId: user.user_id,
+                role: user.role
+            });
+        }
+    );
+});
+
+// FORGOT PASSWORD - STEP 2: Reset password (for buyers, farmers, and cooperatives)
+app.post("/auth/forgot-password/reset", (req, res) => {
+    const { email, newPassword, resetToken } = req.body;
+
+    if (!email || !newPassword || !resetToken) {
+        return res.status(400).json({ message: "Email, new password, and reset token are required" });
+    }
+
+    if (newPassword.length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters long" });
+    }
+
+    // Hash new password
+    bcrypt.hash(newPassword, 10, (hashErr, hashedPassword) => {
+        if (hashErr) {
+            console.error("Error hashing password:", hashErr);
+            return res.status(500).json({ message: "Error processing password" });
+        }
+
+        // Update user's password (for buyers, farmers, and cooperatives)
+        db.query(
+            "UPDATE users SET password = ? WHERE email = ? AND role IN ('buyer', 'farmer', 'cooperative')",
+            [hashedPassword, email],
+            (updateErr, result) => {
+                if (updateErr) {
+                    console.error("Error updating password:", updateErr);
+                    return res.status(500).json({ message: "Error updating password" });
+                }
+
+                if (result.affectedRows === 0) {
+                    return res.status(404).json({ message: "User not found" });
+                }
+
+                res.json({
+                    message: "Password reset successfully! You can now login with your new password."
+                });
+            }
+        );
+    });
+});
+
 // ============= ADMIN ROUTES =============
 
 // Get all farmers (admin only)

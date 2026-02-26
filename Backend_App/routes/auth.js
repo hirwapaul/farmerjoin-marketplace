@@ -141,4 +141,63 @@ router.put("/:userId", (req, res) => {
   );
 });
 
+// FORGOT PASSWORD (for buyers)
+router.post("/forgot-password", (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  // Check if user exists and is a buyer
+  db.query(
+    "SELECT * FROM users WHERE email = ? AND role = 'buyer'",
+    [email],
+    (err, result) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+
+      if (result.length === 0) {
+        return res.status(404).json({ message: "No buyer account found with this email" });
+      }
+
+      const user = result[0];
+      
+      // Generate a temporary password
+      const tempPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      
+      // Hash the temporary password
+      bcrypt.hash(tempPassword, 10, (hashErr, hashedTempPassword) => {
+        if (hashErr) {
+          console.error("Error hashing temporary password:", hashErr);
+          return res.status(500).json({ message: "Error generating temporary password" });
+        }
+
+        // Update user's password with temporary password
+        db.query(
+          "UPDATE users SET password = ? WHERE user_id = ?",
+          [hashedTempPassword, user.user_id],
+          (updateErr) => {
+            if (updateErr) {
+              console.error("Error updating password:", updateErr);
+              return res.status(500).json({ message: "Error updating password" });
+            }
+
+            // In a real application, you would send this via email
+            // For now, we'll return it in the response
+            res.json({
+              message: "Temporary password generated successfully",
+              temporaryPassword: tempPassword,
+              email: user.email,
+              fullName: user.full_name
+            });
+          }
+        );
+      });
+    }
+  );
+});
+
 module.exports = router;
