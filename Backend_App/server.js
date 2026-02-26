@@ -203,7 +203,7 @@ app.post('/farmers/admin/create-farmer', isAdmin, (req, res) => {
                 // Insert into farmers table
                 const farmerQuery = `
                     INSERT INTO farmers (user_id, location, farm_type, description)
-                    VALUES (?, ?, ?)
+                    VALUES (?, ?, ?, ?)
                 `;
                 
                 db.query(farmerQuery, [userId, location, cooperative_name, 'Cooperative Farmer'], (err, farmerResult) => {
